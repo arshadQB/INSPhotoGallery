@@ -3,7 +3,8 @@ platform :ios, "8.0"
 target "INSPhotoGallery" do
     pod 'INSNibLoading'
     pod 'Kingfisher'
-		pod 'INSPhotoGallery', :path => '../'
+#		pod 'INSPhotoGallery', :path => '../'
+    pod 'INSPhotoGallery', :git => 'https://github.com/arshadtp/INSPhotoGallery.git', :tag => '1.2.8.1'
 end
 
 use_frameworks!
