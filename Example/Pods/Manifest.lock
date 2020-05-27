@@ -1,11 +1,11 @@
 PODS:
   - INSNibLoading (1.0.2)
-  - INSPhotoGallery (1.2.8)
+  - INSPhotoGallery (1.2.8.1)
   - Kingfisher (4.10.1)
 
 DEPENDENCIES:
   - INSNibLoading
-  - INSPhotoGallery (from `https://github.com/arshadtp/INSPhotoGallery.git`, tag `1.2.8.1`)
+  - INSPhotoGallery (from `../`)
   - Kingfisher
 
 SPEC REPOS:
@@ -15,19 +15,13 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   INSPhotoGallery:
-    :git: https://github.com/arshadtp/INSPhotoGallery.git
-    :tag: 1.2.8.1
-
-CHECKOUT OPTIONS:
-  INSPhotoGallery:
-    :git: https://github.com/arshadtp/INSPhotoGallery.git
-    :tag: 1.2.8.1
+    :path: "../"
 
 SPEC CHECKSUMS:
   INSNibLoading: 0244d5b9c30d4642c77b31469cbfd905e8b1efb3
-  INSPhotoGallery: ad317cb9a59c7a5f08550e4155b49622c24dcab3
+  INSPhotoGallery: ff30147913a9acff75a1fcb636e0704d83cd78be
   Kingfisher: c148cd7b47ebde9989f6bc7c27dcaa79d81279a0
 
-PODFILE CHECKSUM: 8dee219ccae9b980c99e21e0a1b2834784ced913
+PODFILE CHECKSUM: 43aed61b4022c1abf025e92d6645bd9c4d0281c8
 
 COCOAPODS: 1.8.1

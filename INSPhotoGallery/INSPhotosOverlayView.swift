@@ -208,7 +208,7 @@ open class INSPhotosOverlayView: UIView , INSPhotosOverlayViewable {
         captionLabel.numberOfLines = 0
         addSubview(captionLabel)
         
-        let bottomConstraint = NSLayoutConstraint(item: self, attribute: .bottom, relatedBy: .equal, toItem: captionLabel, attribute: .bottom, multiplier: 1.0, constant: 8.0)
+        let bottomConstraint = NSLayoutConstraint(item: self, attribute: .bottom, relatedBy: .equal, toItem: captionLabel, attribute: .bottom, multiplier: 1.0, constant: 30.0)
         let leadingConstraint = NSLayoutConstraint(item: captionLabel!, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1.0, constant: 8.0)
         let trailingConstraint = NSLayoutConstraint(item: captionLabel!, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailing, multiplier: 1.0, constant: 8.0)
         self.addConstraints([bottomConstraint,leadingConstraint,trailingConstraint])
@@ -231,7 +231,7 @@ open class INSPhotosOverlayView: UIView , INSPhotosOverlayViewable {
     
     private func updateShadowFrames(){
         topShadow.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: 60)
-        bottomShadow.frame = CGRect(x: 0, y: self.frame.height - 60, width: self.frame.width, height: 60)
+        bottomShadow.frame = CGRect(x: 0, y: self.frame.height - 80, width: self.frame.width, height: 80)
         
     }
     

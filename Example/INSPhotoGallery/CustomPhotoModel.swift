@@ -10,67 +10,6 @@ import UIKit
 import Kingfisher
 import INSPhotoGallery
 
-class CustomPhotoModel1: NSObject, INSPhotoViewable {
-	
-    var mimeType: Int = MimeType.video.rawValue
-
-    var image: UIImage?
-    var thumbnailImage: UIImage?
-    var isDeletable: Bool {
-        return false
-    }
-    
-    var fileURL: URL?
-    var thumbnailImageURL: URL?
-    
-    var attributedTitle: NSAttributedString? {
-        #if swift(>=4.0)
-        return NSAttributedString(string: "Example caption text", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
-        #else
-        return NSAttributedString(string: "Example caption text", attributes: [NSForegroundColorAttributeName: UIColor.white])
-        #endif
-    }
-    
-    init(image: UIImage?, thumbnailImage: UIImage?) {
-        self.image = image
-        self.thumbnailImage = thumbnailImage
-    }
-    
-    init(imageURL: URL?, thumbnailImageURL: URL?) {
-        self.fileURL = imageURL
-        self.thumbnailImageURL = thumbnailImageURL
-    }
-    
-    init (imageURL: URL?, thumbnailImage: UIImage) {
-        self.fileURL = imageURL
-        self.thumbnailImage = thumbnailImage
-    }
-    
-    func loadImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ()) {
-        if let url = fileURL {
-            
-            KingfisherManager.shared.retrieveImage(with: ImageResource(downloadURL: url), options: nil, progressBlock: nil, completionHandler: { (image, error, cacheType, url) in
-                completion(image, error)
-            })
-        } else {
-            completion(nil, NSError(domain: "PhotoDomain", code: -1, userInfo: [ NSLocalizedDescriptionKey: "Couldn't load image"]))
-        }
-    }
-    func loadThumbnailImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ()) {
-        if let thumbnailImage = thumbnailImage {
-            completion(thumbnailImage, nil)
-            return
-        }
-        if let url = thumbnailImageURL {
-            KingfisherManager.shared.retrieveImage(with: ImageResource(downloadURL: url), options: nil, progressBlock: nil, completionHandler: { (image, error, cacheType, url) in
-                completion(image, error)
-            })
-        } else {
-            completion(nil, NSError(domain: "PhotoDomain", code: -1, userInfo: [ NSLocalizedDescriptionKey: "Couldn't load image"]))
-        }
-    }
-}
-
 class CustomPhotoModel: NSObject {
     
     var image: UIImage?
@@ -81,35 +20,6 @@ class CustomPhotoModel: NSObject {
     
     var mimeType: Int
     var contentType: String // eg: "video/mp4"
-//    var contentType: String
-    
-//    private var fileExtension: String? {
-//
-//        guard let contentType = attachment.contentType  else {
-//            return nil
-//        }
-//        let components = contentType.components(separatedBy: "/")
-//        if components.count > 1 {
-//            return components[1]
-//        }
-//        return nil
-//    }
-    
-//    private var thumbNailDownloadName: String {
-//
-//        return fileDownloadName
-//    }
-    
-//    private var fileDownloadName: String {
-//        let name = "file" + "\(attachment.attachmentId ?? 0)"
-//
-//        guard let fileExtension = fileExtension else {
-//            return name
-//        }
-//
-//        return name + "." + fileExtension
-//    }
-    
     init(fileURL: URL?, thumbnailImageURL: URL?, mimeType: Int, contentType: String) {
         self.fileURL = fileURL
         self.thumbnailImageURL = thumbnailImageURL
@@ -121,56 +31,11 @@ class CustomPhotoModel: NSObject {
 
 extension CustomPhotoModel : INSPhotoViewable {
     
-//    var fileURL: URL? {
-//        if let url = attachment.contentUrl {
-//            return URL.init(string: url)
-//        }
-//        return nil
-//    }
-    
-//    var thumbnailImageURL: URL? {
-//        if let thumbnailUrl = attachment.thumbnailUrl {
-//            return URL.init(string: thumbnailUrl)
-//        }
-//        return nil
-//    }
     var attributedTitle: NSAttributedString? {
         
-        return NSAttributedString.init(string: "Filename", attributes: [NSAttributedString.Key.foregroundColor : UIColor.white])
+        return NSAttributedString.init(string: "*****************- Filename.ext -*******************", attributes: [NSAttributedString.Key.foregroundColor : UIColor.white])
     }
     
-//    var mimeType: Int  {
-//
-//        guard let contentType = attachment.contentType  else {
-//            return MimeType.other.rawValue
-//        }
-//        if contentType.contains("image") {
-//            return MimeType.image.rawValue
-//        }
-//        if contentType.contains("video") {
-//            return MimeType.video.rawValue
-//        }
-//        if contentType.contains("pdf") {
-//            return MimeType.pdf.rawValue
-//        }
-//        if contentType.contains("csv") {
-//            return MimeType.csv.rawValue
-//        }
-//        if contentType.contains("rtf") {
-//            return MimeType.rtf.rawValue
-//        }
-//        if contentType.contains("plain") {
-//            return MimeType.other.rawValue // txt
-//        }
-//
-//        if contentType.contains("html") {
-//            return MimeType.html.rawValue // txt
-//        }
-//        if contentType.contains("audio") {
-//                   return MimeType.audio.rawValue // txt
-//               }
-//        return MimeType.other.rawValue
-//    }
     
     func loadImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ()) {
         if let url = fileURL {
@@ -182,8 +47,6 @@ extension CustomPhotoModel : INSPhotoViewable {
             completion(nil, NSError(domain: "PhotoDomain", code: -1, userInfo: [ NSLocalizedDescriptionKey: "Couldn't load image"]))
         }
     }
-//    func loadThumbnailImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ()) {
-//    }
 
     func loadThumbnailImageWithCompletionHandler(_ completion: @escaping (UIImage?, Error?) -> ()) {
         
@@ -222,27 +85,6 @@ extension CustomPhotoModel : INSPhotoViewable {
             KingfisherManager.shared.retrieveImage(with: ImageResource(downloadURL: url), options: nil, progressBlock: nil, completionHandler: { (image, error, cacheType, url) in
                 completion(image, error)
             })
-//
-//            if let url = thumbnailImageURL {
-//            } else {
-//                completion(nil, NSError(domain: "PhotoDomain", code: -1, userInfo: [ NSLocalizedDescriptionKey: "Couldn't load image"]))
-//            }
-
-//            IssuesManager.downloadFile(url: url.absoluteString, fileName: thumbNailDownloadName) { [weak self](response) in
-//                switch response {
-//                case .Success(let url):
-//                    if let url = url, let data = try? Data.init(contentsOf: url) {
-//
-//                        let image = UIImage.init(data: data)
-//                        self?.thumbnailImage = image
-//                        completion(image, nil)
-//                    } else {
-//                        completion(nil, NSError(domain: "PhotoDomain", code: -1, userInfo: [ NSLocalizedDescriptionKey: "Couldn't load image"]))
-//                    }
-//                case .Failure(let error):
-//                    completion(nil, error)
-//                }
-//            }
         } else {
             completion(nil, NSError(domain: "PhotoDomain", code: -1, userInfo: [ NSLocalizedDescriptionKey: "Couldn't load image"]))
         }
