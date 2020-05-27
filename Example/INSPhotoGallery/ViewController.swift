@@ -7,23 +7,43 @@
 //
 
 import UIKit
-import INSPhotoGalleryFramework
+import INSPhotoGallery
 
 class ViewController: UIViewController {
 
     @IBOutlet weak var collectionView: UICollectionView!
     var useCustomOverlay = false
     
-    lazy var photos: [INSPhotoViewable] = {
+    lazy var photos: [CustomPhotoModel] = {
+			
+        var rtfPath = Bundle.main.url(forResource: "Father Consent", withExtension: "rtf")
+        var mp3Path = Bundle.main.url(forResource: "file_example_MP3_1MG", withExtension: "mp3")
+
         return [
-            INSPhoto(imageURL: URL(string: "http://inspace.io/assets/portfolio/thumb/13-3f15416ddd11d38619289335fafd498d.jpg"), thumbnailImage: UIImage(named: "thumbnailImage")!),
-            INSPhoto(imageURL: URL(string: "http://inspace.io/assets/portfolio/thumb/13-3f15416ddd11d38619289335fafd498d.jpg"), thumbnailImage: UIImage(named: "thumbnailImage")!),
-            INSPhoto(image: UIImage(named: "fullSizeImage")!, thumbnailImage: UIImage(named: "thumbnailImage")!),
-            INSPhoto(imageURL: URL(string: "http://inspace.io/assets/portfolio/thumb/6-d793b947f57cc3df688eeb1d36b04ddb.jpg"), thumbnailImageURL: URL(string: "http://inspace.io/assets/portfolio/thumb/6-d793b947f57cc3df688eeb1d36b04ddb.jpg")),
-            INSPhoto(imageURL: URL(string: "http://inspace.io/assets/portfolio/thumb/6-d793b947f57cc3df688eeb1d36b04ddb.jpg"), thumbnailImageURL: URL(string: "http://inspace.io/assets/portfolio/thumb/6-d793b947f57cc3df688eeb1d36b04ddb.jpg")),
-            INSPhoto(imageURL: URL(string: "http://inspace.io/assets/portfolio/thumb/6-d793b947f57cc3df688eeb1d36b04ddb.jpg"), thumbnailImageURL: URL(string: "http://inspace.io/assets/portfolio/thumb/6-d793b947f57cc3df688eeb1d36b04ddb.jpg"))
+            CustomPhotoModel.init(fileURL:
+                URL(string:"http://inspace.io/assets/portfolio/thumb/13-3f15416ddd11d38619289335fafd498d.jpg"),
+                                  thumbnailImageURL: URL(string:"http://inspace.io/assets/portfolio/thumb/13-3f15416ddd11d38619289335fafd498d.jpg"),
+                                  mimeType: MimeType.image.rawValue,
+                                  contentType: "image/jpg"),
+            CustomPhotoModel.init(fileURL:
+                mp3Path,
+                                  thumbnailImageURL: nil,
+                                  mimeType: MimeType.audio.rawValue,
+                                  contentType: "audio/mp3"),
+            CustomPhotoModel.init(fileURL:
+                rtfPath,
+                                  thumbnailImageURL:nil,
+                                  mimeType: MimeType.rtf.rawValue,
+                                  contentType: "text/rtf"),
+            CustomPhotoModel.init(fileURL:
+                URL(string: "http://inspace.io/assets/portfolio/thumb/6-d793b947f57cc3df688eeb1d36b04ddb.jpg"),
+                                  thumbnailImageURL: URL(string: "http://inspace.io/assets/portfolio/thumb/6-d793b947f57cc3df688eeb1d36b04ddb.jpg"),
+                                  mimeType: MimeType.image.rawValue,
+                                  contentType: "image/jpg")
             
         ]
+			
+    
     }()
     
     override func viewDidLoad() {
@@ -31,13 +51,21 @@ class ViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         
-        for photo in photos {
-            if let photo = photo as? INSPhoto {
+			for photoItem in photos.enumerated() {
+				if let photo = photoItem.element as? INSPhoto {
                 #if swift(>=4.0)
                     photo.attributedTitle = NSAttributedString(string: "Example caption text\ncaption text", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
                 #else
                     photo.attributedTitle = NSAttributedString(string: "Example caption text\ncaption text", attributes: [NSForegroundColorAttributeName: UIColor.white])
                 #endif
+					if photoItem.offset == 3{
+									 
+										photo.mimeType = MimeType.video.rawValue
+								}
+					if photoItem.offset == 2  {
+						 
+							photo.mimeType = MimeType.other.rawValue
+					}
             }
         }
     }

@@ -19,8 +19,8 @@
 
 import UIKit
 
-open class INSPhotoViewController: UIViewController, UIScrollViewDelegate {
-    var photo: INSPhotoViewable
+open class INSPhotoViewController: UIViewController, UIScrollViewDelegate, INSPhotoDisplayController {
+	public var photo: INSPhotoViewable
     
     var longPressGestureHandler: ((UILongPressGestureRecognizer) -> ())?
     
@@ -94,7 +94,7 @@ open class INSPhotoViewController: UIViewController, UIScrollViewDelegate {
     
     private func loadThumbnailImage() {
         view.bringSubviewToFront(activityIndicator)
-        photo.loadThumbnailImageWithCompletionHandler { [weak self] (image, error) -> () in
+        photo.loadThumbnailImageWithCompletionHandler? { [weak self] (image, error) -> () in
             
             let completeLoading = {
                 self?.scalingImageView.image = image
@@ -116,7 +116,7 @@ open class INSPhotoViewController: UIViewController, UIScrollViewDelegate {
     
     private func loadFullSizeImage() {
         view.bringSubviewToFront(activityIndicator)
-        self.photo.loadImageWithCompletionHandler({ [weak self] (image, error) -> () in
+        self.photo.loadImageWithCompletionHandler?({ [weak self] (image, error) -> () in
             let completeLoading = {
                 self?.activityIndicator.stopAnimating()
                 self?.scalingImageView.image = image    

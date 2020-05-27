@@ -8,7 +8,7 @@
 
 import UIKit
 import INSNibLoading
-import INSPhotoGalleryFramework
+import INSPhotoGallery
 
 class CustomOverlayView: INSNibLoadedView {
     weak var photosViewController: INSPhotosViewController?

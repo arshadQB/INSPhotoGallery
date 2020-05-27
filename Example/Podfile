@@ -3,6 +3,7 @@ platform :ios, "8.0"
 target "INSPhotoGallery" do
     pod 'INSNibLoading'
     pod 'Kingfisher'
+		pod 'INSPhotoGallery', :path => '../'
 end
 
 use_frameworks!

@@ -81,8 +81,8 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
     /*
      * INSPhotoViewController is currently displayed by page view controller
      */
-    open var currentPhotoViewController: INSPhotoViewController? {
-        return pageViewController.viewControllers?.first as? INSPhotoViewController
+    open var currentPhotoViewController: INSPhotoDisplayController? {
+        return pageViewController.viewControllers?.first as? INSPhotoDisplayController
     }
     
     /*
@@ -95,11 +95,7 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
     /*
      * maximum zoom scale for the photos. Default is 1.0
      */
-    open var maximumZoomScale: CGFloat = 1.0 {
-        didSet {
-            self.currentPhotoViewController?.scalingImageView.maximumZoomScale = maximumZoomScale
-        }
-    }
+    open var maximumZoomScale: CGFloat = 1.0
     
     // MARK: - Private
     public private(set) var pageViewController: UIPageViewController!
@@ -109,10 +105,14 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
     public let transitionAnimator: INSPhotosTransitionAnimator = INSPhotosTransitionAnimator()
     
     public private(set) lazy var singleTapGestureRecognizer: UITapGestureRecognizer = {
-        return UITapGestureRecognizer(target: self, action: #selector(INSPhotosViewController.handleSingleTapGestureRecognizer(_:)))
+			let gesture = UITapGestureRecognizer(target: self, action: #selector(INSPhotosViewController.handleSingleTapGestureRecognizer(_:)))
+			gesture.delegate = self
+
+        return gesture
     }()
     public private(set) lazy var panGestureRecognizer: UIPanGestureRecognizer = {
-        return UIPanGestureRecognizer(target: self, action: #selector(INSPhotosViewController.handlePanGestureRecognizer(_:)))
+			let gesture = UIPanGestureRecognizer(target: self, action: #selector(INSPhotosViewController.handlePanGestureRecognizer(_:)))
+        return gesture
     }()
     
     private var interactiveDismissal: Bool = false
@@ -166,7 +166,7 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
         super.init(nibName: nil, bundle: nil)
         initialSetupWithInitialPhoto(initialPhoto)
         transitionAnimator.startingView = referenceView
-        transitionAnimator.endingView = currentPhotoViewController?.scalingImageView.imageView
+        transitionAnimator.endingView = currentPhotoViewController?.view//scalingImageView.imageView
     }
     
     private func initialSetupWithInitialPhoto(_ initialPhoto: INSPhotoViewable? = nil) {
@@ -342,9 +342,9 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
             return
         }
         var startingView: UIView?
-        if currentPhotoViewController?.scalingImageView.imageView.image != nil {
-            startingView = currentPhotoViewController?.scalingImageView.imageView
-        }
+//        if currentPhotoViewController?.scalingImageView.imageView.image != nil {
+            startingView = currentPhotoViewController?.view//scalingImageView.imageView
+//        }
         transitionAnimator.startingView = startingView
         
         if let currentPhoto = currentPhoto {
@@ -372,7 +372,17 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
     
     // MARK: - UIPageViewControllerDataSource / UIPageViewControllerDelegate
 
-    public func initializePhotoViewControllerForPhoto(_ photo: INSPhotoViewable) -> INSPhotoViewController {
+    public func initializePhotoViewControllerForPhoto(_ photo: INSPhotoViewable) -> UIViewController {
+			
+        let webViewSupportedTypes = [MimeType.video.rawValue, MimeType.audio.rawValue, MimeType.pdf.rawValue, MimeType.csv.rawValue, MimeType.rtf.rawValue, MimeType.html.rawValue, MimeType.other.rawValue]
+        if webViewSupportedTypes.contains(photo.mimeType)
+        {
+            let webViewController = INSWebViewController(photo: photo)
+            return webViewController
+        }
+        
+
+			  
         let photoViewController = INSPhotoViewController(photo: photo)
         singleTapGestureRecognizer.require(toFail: photoViewController.doubleTapGestureRecognizer)
         photoViewController.longPressGestureHandler = { [weak self] gesture in
@@ -402,28 +412,43 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
     }
     
     @objc open func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let photoViewController = viewController as? INSPhotoViewController,
+        
+			 if let photoViewController = viewController as? INSPhotoViewController,
            let photoIndex = dataSource.indexOfPhoto(photoViewController.photo),
-           let newPhoto = dataSource[photoIndex-1] else {
-            return nil
+           let newPhoto = dataSource[photoIndex-1]  {
+				
+						return initializePhotoViewControllerForPhoto(newPhoto)
+        } else if let webViewController = viewController as? INSWebViewController,
+           let photoIndex = dataSource.indexOfPhoto(webViewController.photo),
+           let newPhoto = dataSource[photoIndex-1]  {
+					
+						return initializePhotoViewControllerForPhoto(newPhoto)
         }
-        return initializePhotoViewControllerForPhoto(newPhoto)
+        return nil
     }
     
     @objc open func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let photoViewController = viewController as? INSPhotoViewController,
+        if let photoViewController = viewController as? INSPhotoViewController,
             let photoIndex = dataSource.indexOfPhoto(photoViewController.photo),
-            let newPhoto = dataSource[photoIndex+1] else {
-                return nil
+            let newPhoto = dataSource[photoIndex+1]  {
+                return initializePhotoViewControllerForPhoto(newPhoto)
+        } else if let webViewController = viewController as? INSWebViewController,
+            let photoIndex = dataSource.indexOfPhoto(webViewController.photo),
+            let newPhoto = dataSource[photoIndex+1]  {
+                return initializePhotoViewControllerForPhoto(newPhoto)
         }
-        return initializePhotoViewControllerForPhoto(newPhoto)
+        return nil
     }
     
     @objc open func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if completed {
             updateCurrentPhotosInformation()
             if let currentPhotoViewController = currentPhotoViewController {
-                navigateToPhotoHandler?(currentPhotoViewController.photo)
+							if let vc = currentPhotoViewController as? INSWebViewController, vc.photo.mimeType != MimeType.video.rawValue, vc.photo.mimeType != MimeType.audio.rawValue {
+								vc.reloadData()
+							}
+							navigateToPhotoHandler?(currentPhotoViewController.photo)
+							pageViewController.view.addGestureRecognizer(singleTapGestureRecognizer)
             }
         }
     }
@@ -454,20 +479,20 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
     
     // MARK: - UIResponder
     
-    open override func copy(_ sender: Any?) {
-        UIPasteboard.general.image = currentPhoto?.image ?? currentPhotoViewController?.scalingImageView.image
-    }
+//    open override func copy(_ sender: Any?) {
+////        UIPasteboard.general.image = currentPhoto?.image ?? currentPhotoViewController?.scalingImageView.image
+//    }
     
-    open override var canBecomeFirstResponder: Bool {
-        return true
-    }
+//    open override var canBecomeFirstResponder: Bool {
+//        return true
+//    }
     
-    open override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        if let _ = currentPhoto?.image ?? currentPhotoViewController?.scalingImageView.image , shouldHandleLongPressGesture && action == #selector(NSObject.copy) {
-            return true
-        }
-        return false
-    }
+//    open override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+//        if let _ = currentPhoto?.image ?? currentPhotoViewController?.scalingImageView.image , shouldHandleLongPressGesture && action == #selector(NSObject.copy) {
+//            return true
+//        }
+//        return false
+//    }
     
     // MARK: - Status Bar
     
@@ -487,3 +512,11 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
     }
 }
 
+extension INSPhotosViewController: UIGestureRecognizerDelegate {
+	
+	// MARK: UIGestureRecognizerDelegate method
+	public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+												 shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+			return true
+	}
+}

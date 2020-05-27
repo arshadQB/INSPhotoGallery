@@ -139,13 +139,26 @@ open class INSPhotosOverlayView: UIView , INSPhotosOverlayViewable {
     
     @objc private func actionButtonTapped(_ sender: UIBarButtonItem) {
         if let currentPhoto = currentPhoto {
-            currentPhoto.loadImageWithCompletionHandler({ [weak self] (image, error) -> () in
-                if let image = (image ?? currentPhoto.thumbnailImage) {
-                    let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
-                    activityController.popoverPresentationController?.barButtonItem = sender
-                    self?.photosViewController?.present(activityController, animated: true, completion: nil)
-                }
-            });
+            if currentPhoto.mimeType == MimeType.image.rawValue {
+                currentPhoto.loadImageWithCompletionHandler?({ [weak self] (image, error) -> () in
+                    if let image = (image ?? currentPhoto.thumbnailImage) {
+                        let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+                        activityController.popoverPresentationController?.barButtonItem = sender
+                        self?.photosViewController?.present(activityController, animated: true, completion: nil)
+                    }
+                });
+
+            } else {
+                currentPhoto.loadDataWithCompletionHandler?({ [weak self] (url, contentType, error) in
+                    if let url = url, let data = try? Data.init(contentsOf: url), error == nil {
+                        let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+                        activityController.popoverPresentationController?.barButtonItem = sender
+                        self?.photosViewController?.present(activityController, animated: true, completion: nil)
+                    } else {
+                        
+                    }
+                })
+            }
         }
     }
     

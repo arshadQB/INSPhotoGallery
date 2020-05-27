@@ -23,24 +23,52 @@ import UIKit
  * This is marked as @objc because of Swift bug http://stackoverflow.com/questions/30100787/fatal-error-array-cannot-be-bridged-from-objective-c-why-are-you-even-trying when passing for example [INSPhoto] array
  * to INSPhotosViewController
  */
+public enum MimeType: Int {
+	case image = 0
+	case video
+    case audio
+    case pdf
+    case csv
+    case rtf
+    case html
+	case other
+}
+
+public protocol INSPhotoDisplayController: UIViewController  {
+		var photo: INSPhotoViewable { get }
+}
+
 @objc public protocol INSPhotoViewable: class {
+	
     var image: UIImage? { get }
     var thumbnailImage: UIImage? { get }
+		var mimeType: Int { get }
+		var fileURL: URL? { get }
+		var thumbnailImageURL: URL? { get }
+
     @objc optional var isDeletable: Bool { get }
     
-    func loadImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ())
-    func loadThumbnailImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ())
-    
+    @objc optional func loadImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ())
+    @objc optional func loadThumbnailImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ())
+    @objc optional func loadDataWithCompletionHandler(_ completion: @escaping (_ fileURL: URL?,_ contentType: String?,  _ error: Error?) -> ())
+    @objc optional func loadPlaceholderDataWithCompletionHandler(_ completion: @escaping (_ fileURL: URL?,  _ error: Error?) -> ())
+
+
     var attributedTitle: NSAttributedString? { get }
 }
 
+
+
 @objc open class INSPhoto: NSObject, INSPhotoViewable {
+	
+    @objc public var mimeType: Int = MimeType.image.rawValue
+	
     @objc open var image: UIImage?
     @objc open var thumbnailImage: UIImage?
     @objc open var isDeletable: Bool
     
-    var imageURL: URL?
-    var thumbnailImageURL: URL?
+    public var fileURL: URL?
+    public var thumbnailImageURL: URL?
     
     @objc open var attributedTitle: NSAttributedString?
     
@@ -51,13 +79,13 @@ import UIKit
     }
     
     public init(imageURL: URL?, thumbnailImageURL: URL?) {
-        self.imageURL = imageURL
+        self.fileURL = imageURL
         self.thumbnailImageURL = thumbnailImageURL
         self.isDeletable = false
     }
     
     public init (imageURL: URL?, thumbnailImage: UIImage?) {
-        self.imageURL = imageURL
+        self.fileURL = imageURL
         self.thumbnailImage = thumbnailImage
         self.isDeletable = false
     }
@@ -67,8 +95,9 @@ import UIKit
             completion(image, nil)
             return
         }
-        loadImageWithURL(imageURL, completion: completion)
+        loadImageWithURL(fileURL, completion: completion)
     }
+    
     @objc open func loadThumbnailImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ()) {
         if let thumbnailImage = thumbnailImage {
             completion(thumbnailImage, nil)
