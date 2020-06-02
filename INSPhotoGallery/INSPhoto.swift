@@ -30,6 +30,9 @@ public enum MimeType: Int {
     case pdf
     case csv
     case rtf
+    case txt
+    case excel
+    case windowsDoc
     case html
 	case other
 }

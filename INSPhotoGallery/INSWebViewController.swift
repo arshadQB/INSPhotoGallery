@@ -108,11 +108,30 @@ open class INSWebViewController: UIViewController, INSPhotoDisplayController, UI
         super.viewWillAppear(animated)
     }
     
+    open override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if photo.mimeType == MimeType.audio.rawValue {
+            pauseAudio()
+        } else if  photo.mimeType == MimeType.video.rawValue {
+           pauseVideo()
+        }
+        
+    }
+    
     
     @objc func buttonAction() {
         loadData()
     }
     
+    private func pauseVideo() {
+        let script = "var vids = document.getElementsByTagName('video'); for( var i = 0; i < vids.length; i++ ){vids.item(i).pause()}"
+        self.webView.evaluateJavaScript(script, completionHandler:nil)
+    }
+    
+    private func pauseAudio() {
+           let script = "var vids = document.getElementsByTagName('audio'); for( var i = 0; i < vids.length; i++ ){vids.item(i).pause()}"
+           self.webView.evaluateJavaScript(script, completionHandler:nil)
+       }
     func updateView() {
         switch viewState {
         case .placeholder, .unsuppportedType:
@@ -193,7 +212,13 @@ open class INSWebViewController: UIViewController, INSPhotoDisplayController, UI
     
     private func loadDataInWebView(url: URL, contentType: String) {
         switch MimeType.init(rawValue: photo.mimeType) {
-        case .image, .pdf,.csv, .rtf, .html:
+        case .csv:
+            loadDoc(url: url, contentType: "text/csv")
+        case .txt:
+            loadDoc(url: url, contentType: "text/plain")
+        case .excel, .windowsDoc:
+            loadDoc(url: url, contentType: contentType)
+        case .image, .pdf, .html, .rtf:
             if #available(iOS 9.0, *) {
                 self.webView.loadFileURL(url, allowingReadAccessTo: url)
             } else {
@@ -209,7 +234,18 @@ open class INSWebViewController: UIViewController, INSPhotoDisplayController, UI
         }
         
     }
-    
+        
+    private func loadDoc(url: URL, contentType: String) {
+        do {
+            let docContents = try Data(contentsOf: url)
+            let urlStr = "data:\(contentType);base64," + docContents.base64EncodedString()
+            let url = URL(string: urlStr)!
+            let request = URLRequest(url: url)
+            self.webView.load(request)
+        } catch {
+            print("Failed to load data")
+        }
+    }
     private func loadVideo(url: URL, contentType: String) {
         let html = WebViewHelper.createVideoHTML(forVideoAtPath: "\(url.absoluteString + "#t=0.1")", and: contentType)
         self.webView.loadHTMLString(html, baseURL: url)

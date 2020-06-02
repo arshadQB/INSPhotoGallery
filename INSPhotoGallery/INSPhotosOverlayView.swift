@@ -141,11 +141,19 @@ open class INSPhotosOverlayView: UIView , INSPhotosOverlayViewable {
         if let currentPhoto = currentPhoto {
             if currentPhoto.mimeType == MimeType.image.rawValue {
                 currentPhoto.loadImageWithCompletionHandler?({ [weak self] (image, error) -> () in
-                    if let image = (image ?? currentPhoto.thumbnailImage) {
-                        let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
-                        activityController.popoverPresentationController?.barButtonItem = sender
-                        self?.photosViewController?.present(activityController, animated: true, completion: nil)
-                    }
+                   
+                        if let image = (image ?? currentPhoto.thumbnailImage) {
+                            if #available(iOS 13.0, *) {
+                                let activityController = DisabledDismissActivityViewController(activityItems: [image], applicationActivities: nil)
+                                activityController.popoverPresentationController?.barButtonItem = sender
+                                self?.photosViewController?.present(activityController, animated: true, completion: nil)
+                            } else {
+                                let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+                                activityController.popoverPresentationController?.barButtonItem = sender
+                                self?.photosViewController?.present(activityController, animated: true, completion: nil)
+                            }
+                        }
+                    
                 });
 
             } else {
@@ -252,4 +260,9 @@ open class INSPhotosOverlayView: UIView , INSPhotosOverlayViewable {
         let heightConstraint = NSLayoutConstraint(item: deleteToolbar!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50)
         self.addConstraints([bottomConstraint,trailingConstraint,widthConstraint, heightConstraint])
     }
+}
+
+@available(iOS 13.0, *)
+final class DisabledDismissActivityViewController: UIActivityViewController {
+    override func dismiss(animated: Bool, completion: (() -> Void)? = nil) {}
 }

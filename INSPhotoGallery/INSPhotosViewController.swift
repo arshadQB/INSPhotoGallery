@@ -374,7 +374,7 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
 
     public func initializePhotoViewControllerForPhoto(_ photo: INSPhotoViewable) -> UIViewController {
 			
-        let webViewSupportedTypes = [MimeType.video.rawValue, MimeType.audio.rawValue, MimeType.pdf.rawValue, MimeType.csv.rawValue, MimeType.rtf.rawValue, MimeType.html.rawValue, MimeType.other.rawValue]
+        let webViewSupportedTypes = [MimeType.video.rawValue, MimeType.audio.rawValue, MimeType.pdf.rawValue, MimeType.csv.rawValue, MimeType.rtf.rawValue, MimeType.txt.rawValue, MimeType.excel.rawValue, MimeType.html.rawValue, MimeType.other.rawValue, MimeType.windowsDoc.rawValue]
         if webViewSupportedTypes.contains(photo.mimeType)
         {
             let webViewController = INSWebViewController(photo: photo)
