@@ -23,19 +23,7 @@ import UIKit
  * This is marked as @objc because of Swift bug http://stackoverflow.com/questions/30100787/fatal-error-array-cannot-be-bridged-from-objective-c-why-are-you-even-trying when passing for example [INSPhoto] array
  * to INSPhotosViewController
  */
-public enum MimeType: Int {
-	case image = 0
-	case video
-    case audio
-    case pdf
-    case csv
-    case rtf
-    case txt
-    case excel
-    case windowsDoc
-    case html
-	case other
-}
+
 
 public protocol INSPhotoDisplayController: UIViewController  {
 		var photo: INSPhotoViewable { get }
@@ -45,9 +33,9 @@ public protocol INSPhotoDisplayController: UIViewController  {
 	
     var image: UIImage? { get }
     var thumbnailImage: UIImage? { get }
-		var mimeType: Int { get }
-		var fileURL: URL? { get }
-		var thumbnailImageURL: URL? { get }
+    var mimeType: Int { get }
+    var fileURL: URL? { get }
+    var thumbnailImageURL: URL? { get }
 
     @objc optional var isDeletable: Bool { get }
     

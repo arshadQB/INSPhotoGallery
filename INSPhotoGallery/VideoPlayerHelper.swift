@@ -9,7 +9,8 @@ import Foundation
 import UIKit
 
 class WebViewHelper {
-	
+    
+    
     private static func getHTMLFile(name: String) -> String {
 		if let bundlePath = Bundle(for:self).path(forResource: "INSPhotoGallery", ofType: "bundle") {
 			let bundle = Bundle(path: bundlePath)

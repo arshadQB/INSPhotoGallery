@@ -216,9 +216,9 @@ open class INSWebViewController: UIViewController, INSPhotoDisplayController, UI
             loadDoc(url: url, contentType: "text/csv")
         case .txt:
             loadDoc(url: url, contentType: "text/plain")
-        case .excel, .windowsDoc:
+        case .excel, .windowsDoc, .pdf:
             loadDoc(url: url, contentType: contentType)
-        case .image, .pdf, .html, .rtf:
+        case .image, .html, .rtf:
             if #available(iOS 9.0, *) {
                 self.webView.loadFileURL(url, allowingReadAccessTo: url)
             } else {
@@ -242,6 +242,7 @@ open class INSWebViewController: UIViewController, INSPhotoDisplayController, UI
             let url = URL(string: urlStr)!
             let request = URLRequest(url: url)
             self.webView.load(request)
+            
         } catch {
             print("Failed to load data")
         }
@@ -290,6 +291,7 @@ open class INSWebViewController: UIViewController, INSPhotoDisplayController, UI
     //        }
     //    }
 }
+
 
 fileprivate extension UIButton {
 

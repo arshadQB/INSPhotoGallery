@@ -1,6 +1,6 @@
 PODS:
   - INSNibLoading (1.0.2)
-  - INSPhotoGallery (1.2.8.2)
+  - INSPhotoGallery (1.2.8.3)
   - Kingfisher (4.10.1)
 
 DEPENDENCIES:
@@ -19,7 +19,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   INSNibLoading: 0244d5b9c30d4642c77b31469cbfd905e8b1efb3
-  INSPhotoGallery: 3dc47c44742a29ad6f9c463c2ba39ebded0907e8
+  INSPhotoGallery: 3ec87710dbdca40e45d15e01fd9c03a259b34371
   Kingfisher: c148cd7b47ebde9989f6bc7c27dcaa79d81279a0
 
 PODFILE CHECKSUM: 43aed61b4022c1abf025e92d6645bd9c4d0281c8
