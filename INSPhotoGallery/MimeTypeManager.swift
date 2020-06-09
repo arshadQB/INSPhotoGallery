@@ -38,11 +38,13 @@ public struct MimeTypeManager {
     ///   - fileExtension: extension
     public static func getMimeTypeFrom(contentType: String?, fileExtension: String?) -> MimeType {
         
+        var fileTypeBasedOnExtension: MimeType = .other
+        if let fileExtension = fileExtension {
+            fileTypeBasedOnExtension = getMimeTypeFrom(fileExtension: fileExtension)
+        }
+        
         guard let contentTypeStr = contentType?.lowercased() else {
-            if let fileExtension = fileExtension {
-                return getMimeTypeFrom(fileExtension: fileExtension)
-            }
-            return .other
+            return fileTypeBasedOnExtension
         }
         
         if contentTypeStr.isUnsupportedContent { // Not supported
@@ -74,7 +76,7 @@ public struct MimeTypeManager {
             return MimeType.pdf
         }
         //csv exported from ms-excel has content type "application/vnd.ms-excel". so checking extension also as a work-around
-        if contentTypeStr.contains("csv") {
+        if contentTypeStr.contains("csv") || fileTypeBasedOnExtension == MimeType.csv{
             
             return MimeType.csv
         }
@@ -96,8 +98,9 @@ public struct MimeTypeManager {
             return MimeType.windowsDoc // Windows doc formats
             
         }
-        
-        return .other
+        // If contenttype is not recognzed then check file extension for type.
+        // Work around to fix issues like eg: csv file imported from MS Excel has type application/xx-msxl-xx
+        return fileTypeBasedOnExtension
     }
     
     private static func getMimeTypeFrom(fileExtension: String) -> MimeType {
