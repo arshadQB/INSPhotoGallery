@@ -182,9 +182,9 @@ open class INSWebViewController: UIViewController, INSPhotoDisplayController, UI
     }
     
     private func loadData()  {
-        if !canLoadData() {
-            return
-        }
+//        if !canLoadData() {
+//            return
+//        }
         view.bringSubviewToFront(activityIndicator)
         viewState = .loading
         photo.loadDataWithCompletionHandler?({ [weak self] (url, contentType, error) in
@@ -194,9 +194,9 @@ open class INSWebViewController: UIViewController, INSPhotoDisplayController, UI
                     self?.viewState = .failed
                 } else {
                     self?.viewState = .dataLoaded
-                    if let url = url, let contentType = contentType {
+                    if let url = url {
                         self?.url = url
-                        if url.scheme == "file" as String {
+                        if url.scheme == "file" as String, let contentType = contentType {
                             self?.loadDataInWebView(url: url, contentType: contentType)
                         }
                         else {
