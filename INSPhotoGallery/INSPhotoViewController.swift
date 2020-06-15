@@ -94,8 +94,9 @@ open class INSPhotoViewController: UIViewController, UIScrollViewDelegate, INSPh
     
     private func loadThumbnailImage() {
         view.bringSubviewToFront(activityIndicator)
-        photo.loadThumbnailImageWithCompletionHandler? { [weak self] (image, error) -> () in
+        photo.loadThumbnailImageWithCompletionHandler?({ (placeholder) in
             
+        }, downloadCompletion: { [weak self] (image, error) in
             let completeLoading = {
                 self?.scalingImageView.image = image
                 if image != nil {
@@ -111,7 +112,7 @@ open class INSPhotoViewController: UIViewController, UIScrollViewDelegate, INSPh
                     completeLoading()
                 })
             }
-        }
+        })
     }
     
     private func loadFullSizeImage() {

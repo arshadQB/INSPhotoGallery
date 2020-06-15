@@ -13,13 +13,16 @@ class ExampleCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
     
     func populateWithPhoto(_ photo: INSPhotoViewable) {
-        photo.loadThumbnailImageWithCompletionHandler? { [weak photo] (image, error) in
+        photo.loadThumbnailImageWithCompletionHandler?({ (placeholder) in
+            
+        }, downloadCompletion: { [weak self] (image, error) in
             if let image = image {
                 if let photo = photo as? INSPhoto {
                     photo.thumbnailImage = image
                 }
-                self.imageView.image = image
+                self?.imageView.image = image
             }
-        }
+        })
+        
     }
 }

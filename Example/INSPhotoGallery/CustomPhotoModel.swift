@@ -48,45 +48,45 @@ extension CustomPhotoModel : INSPhotoViewable {
         }
     }
 
-    func loadThumbnailImageWithCompletionHandler(_ completion: @escaping (UIImage?, Error?) -> ()) {
+    func loadThumbnailImageWithCompletionHandler(_ placeholderCompletion: @escaping (UIImage?) -> (), downloadCompletion: @escaping (UIImage?, Error?) -> ()) {
         
         switch MimeType.init(rawValue: mimeType) {
         case .image:
-            completion(UIImage.init(named: "image"), nil)
+            placeholderCompletion(UIImage.init(named: "image"))
         case .video:
-            completion(UIImage.init(named: "video"), nil)
+            placeholderCompletion(UIImage.init(named: "video"))
             return
         case .pdf:
-            completion(UIImage.init(named: "pdf"), nil)
+            placeholderCompletion(UIImage.init(named: "pdf"))
             return
         case .audio:
-            completion(UIImage.init(named: "audio"), nil)
+            placeholderCompletion(UIImage.init(named: "audio"))
             return
         case .csv:
-            completion(UIImage.init(named: "csv"), nil)
+            placeholderCompletion(UIImage.init(named: "csv"))
             return
         case .rtf:
-            completion(UIImage.init(named: "text"), nil)
+            placeholderCompletion(UIImage.init(named: "text"))
             return
         case .html:
-            completion(UIImage.init(named: "doc"), nil)
+            placeholderCompletion(UIImage.init(named: "doc"))
             return
         default:
-            completion(UIImage.init(named: "unsupported"), nil)
+            placeholderCompletion(UIImage.init(named: "unsupported"))
             return
         }
         /// Thumbnail doesn't have data, so loading full image
         if let url = fileURL {
             
             if let thumbnailImage = thumbnailImage {
-                completion(thumbnailImage, nil)
+                downloadCompletion(thumbnailImage, nil)
                 return
             }
             KingfisherManager.shared.retrieveImage(with: ImageResource(downloadURL: url), options: nil, progressBlock: nil, completionHandler: { (image, error, cacheType, url) in
-                completion(image, error)
+                downloadCompletion(image, error)
             })
         } else {
-            completion(nil, NSError(domain: "PhotoDomain", code: -1, userInfo: [ NSLocalizedDescriptionKey: "Couldn't load image"]))
+            downloadCompletion(nil, NSError(domain: "PhotoDomain", code: -1, userInfo: [ NSLocalizedDescriptionKey: "Couldn't load image"]))
         }
         
     }

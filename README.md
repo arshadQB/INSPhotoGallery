@@ -50,7 +50,7 @@ You are able to create your custom photo model which can be use instead default 
     var thumbnailImage: UIImage? { get }
 
     func loadImageWithCompletionHandler(completion: (image: UIImage?, error: NSError?) -> ())
-    func loadThumbnailImageWithCompletionHandler(completion: (image: UIImage?, error: NSError?) -> ())
+    func loadThumbnailImageWithCompletionHandler(_ placeholderCompletion: @escaping (UIImage?) -> (), downloadCompletion: @escaping (UIImage?, Error?) -> ())
 
     var attributedTitle: NSAttributedString? { get }
 }

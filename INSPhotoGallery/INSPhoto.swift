@@ -40,7 +40,7 @@ public protocol INSPhotoDisplayController: UIViewController  {
     @objc optional var isDeletable: Bool { get }
     
     @objc optional func loadImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ())
-    @objc optional func loadThumbnailImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ())
+    @objc optional func loadThumbnailImageWithCompletionHandler(_ placeholderCompletion: @escaping (UIImage?) -> (), downloadCompletion: @escaping (UIImage?, Error?) -> ())
     @objc optional func loadDataWithCompletionHandler(_ completion: @escaping (_ fileURL: URL?,_ contentType: String?,  _ error: Error?) -> ())
     @objc optional func loadPlaceholderDataWithCompletionHandler(_ completion: @escaping (_ fileURL: URL?,  _ error: Error?) -> ())
 
@@ -89,12 +89,12 @@ public protocol INSPhotoDisplayController: UIViewController  {
         loadImageWithURL(fileURL, completion: completion)
     }
     
-    @objc open func loadThumbnailImageWithCompletionHandler(_ completion: @escaping (_ image: UIImage?, _ error: Error?) -> ()) {
+    @objc open func loadThumbnailImageWithCompletionHandler(_ placeholderCompletion: @escaping (UIImage?) -> (), downloadCompletion: @escaping (UIImage?, Error?) -> ()) {
         if let thumbnailImage = thumbnailImage {
-            completion(thumbnailImage, nil)
+            downloadCompletion(thumbnailImage, nil)
             return
         }
-        loadImageWithURL(thumbnailImageURL, completion: completion)
+        loadImageWithURL(thumbnailImageURL, completion: downloadCompletion)
     }
     
     open func loadImageWithURL(_ url: URL?, completion: @escaping (_ image: UIImage?, _ error: Error?) -> ()) {

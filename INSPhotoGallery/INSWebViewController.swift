@@ -258,18 +258,21 @@ open class INSWebViewController: UIViewController, INSPhotoDisplayController, UI
     }
     
     private func loadThumbnailImage() {
-        photo.loadThumbnailImageWithCompletionHandler? { [weak self] (image, error) -> () in
+        photo.loadThumbnailImageWithCompletionHandler?({ (placeholder) in
+            
+        }, downloadCompletion: { [weak self] (image, error) in
             guard let self = self else {return}
             self.button.setImage(image, for: .normal)
-
-//            if self.photo.mimeType == MimeType.other.rawValue {
-//                self.button.setTitle("Not Supported", for: .normal)
-//                self.button.centerVertically(padding: 50)
-//            }
+            
+            //            if self.photo.mimeType == MimeType.other.rawValue {
+            //                self.button.setTitle("Not Supported", for: .normal)
+            //                self.button.centerVertically(padding: 50)
+            //            }
             self.button.sizeToFit()
             self.button.center = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
             
-        }
+        })
+        
     }
     
     
