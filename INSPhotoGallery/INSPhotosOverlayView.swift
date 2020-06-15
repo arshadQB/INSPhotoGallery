@@ -159,9 +159,15 @@ open class INSPhotosOverlayView: UIView , INSPhotosOverlayViewable {
             } else {
                 currentPhoto.loadDataWithCompletionHandler?({ [weak self] (url, contentType, error) in
                     if let url = url, let data = try? Data.init(contentsOf: url), error == nil {
-                        let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-                        activityController.popoverPresentationController?.barButtonItem = sender
-                        self?.photosViewController?.present(activityController, animated: true, completion: nil)
+                        if #available(iOS 13.0, *) {
+                            let activityController = DisabledDismissActivityViewController(activityItems: [url], applicationActivities: nil)
+                            activityController.popoverPresentationController?.barButtonItem = sender
+                            self?.photosViewController?.present(activityController, animated: true, completion: nil)
+                        }else {
+                            let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+                            activityController.popoverPresentationController?.barButtonItem = sender
+                            self?.photosViewController?.present(activityController, animated: true, completion: nil)
+                        }
                     } else {
                         
                     }
