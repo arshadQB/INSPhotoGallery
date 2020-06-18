@@ -156,7 +156,7 @@ fileprivate extension String {
              "XWD","CIFF","DNG","Vector","AI","CDR","CGM","DXF",
              "EVA","EMF","EMF+",
              "Gerber","HVIF","IGES","PGML","SVG","VML","WMF",
-             "Xar","Compound","CDF","DjVu","EPS","PDF","PICT","PS","SWF","XAML"
+             "Xar","Compound","CDF","DjVu","EPS","PDF","PICT","PS","SWF","XAML, JPG"
         ]
         return imageExtensions.contains(self.uppercased())
     }
